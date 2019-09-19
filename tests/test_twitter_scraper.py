@@ -70,5 +70,5 @@ def get_batch_to_process_returns_2_lists():
 
 def test_can_import_from_docs_folder():
     docs_path = twitter_scraper.get_docs_abs_path()
-    assert docs_path == "c:\\Dev\\bootcamp\\twitter_api_exercise\\docs\\"
+    assert docs_path == "C:\\Dev\\bootcamp\\twitter_api_exercise\\docs"
 
