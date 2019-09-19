@@ -11,7 +11,7 @@ REQUEST_THROTTLE_IN_SECONDS = 1
 def get_credentials_as_dict():
 
     credendials_dict = {}
-    with open('docs\\api_credentials', 'r') as file:
+    with open('docs\\api_credentials.txt', 'r') as file:
         for line in file:
             key = line.split('=')[0].strip()
             value = line.split('=')[1].strip()

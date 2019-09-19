@@ -1,5 +1,8 @@
 import pytest
-import twitter_scraper
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+from src.twitter_scraper import twitter_scraper
+
 
 
 @pytest.fixture
@@ -59,7 +62,6 @@ def test_ids_and_sentiment_labels_are_the_same_length(ids, sentiment_labels):
 
 
 def get_batch_to_process_returns_2_lists():
-
     a, b = twitter_scraper.get_batch_to_process()
     assert isinstance(a, list)
     assert isinstance(b, list)
