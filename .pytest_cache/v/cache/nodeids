@@ -8,5 +8,6 @@
   "tests/test_twitter_scraper.py::test_read_values_are_strings_without_spaces_or_quotes",
   "tests/test_twitter_scraper.py::test_returns_lists[list_variable0]",
   "tests/test_twitter_scraper.py::test_returns_lists[list_variable1]",
-  "tests/test_twitter_scraper.py::test_ids_and_sentiment_labels_are_the_same_length"
+  "tests/test_twitter_scraper.py::test_ids_and_sentiment_labels_are_the_same_length",
+  "tests/test_twitter_scraper.py::test_can_import_from_docs_folder"
 ]

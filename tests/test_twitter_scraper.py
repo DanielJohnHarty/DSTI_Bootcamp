@@ -1,5 +1,6 @@
 import pytest
 import os, sys
+# Hack to allow importing from a sibling folder 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from src.twitter_scraper import twitter_scraper
 
@@ -67,4 +68,7 @@ def get_batch_to_process_returns_2_lists():
     assert isinstance(b, list)
 
 
+def test_can_import_from_docs_folder():
+    docs_path = twitter_scraper.get_docs_abs_path()
+    assert docs_path == "c:\\Dev\\bootcamp\\twitter_api_exercise\\docs\\"
 

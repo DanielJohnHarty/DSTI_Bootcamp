@@ -1,17 +1,26 @@
 import csv
 import time
 import tweepy
+import os
+
+def get_docs_abs_path():
+    docs_path = os.path.join(r'C:\Dev\bootcamp\twitter_api_exercise','docs')
+    return docs_path
 
 # Define batch size for processing
-BATCH_SIZE = 20
+BATCH_SIZE = 100
 RESULTS_CSV_FILE_NAME = 'results.csv'
-REQUEST_THROTTLE_IN_SECONDS = 1
+EXCEL_RESULTS_FILE = os.path.join(get_docs_abs_path(),'excel_results.xlsx')
+REQUEST_THROTTLE_IN_SECONDS = 0.2
 
+
+CREDENTIALS_TXT = get_docs_abs_path() + r'\api_credentials.txt'
+RESULTS_CSV_FILE_NAME = get_docs_abs_path() + r'\results.csv'
 
 def get_credentials_as_dict():
 
     credendials_dict = {}
-    with open('docs\\api_credentials.txt', 'r') as file:
+    with open(CREDENTIALS_TXT, 'r') as file:
         for line in file:
             key = line.split('=')[0].strip()
             value = line.split('=')[1].strip()
@@ -27,7 +36,7 @@ def get_ids_and_labels_as_lists():
     ids = []
     sentiment_labels = []
 
-    with open('docs\\BIDU.txt', 'r') as file:
+    with open(os.path.join(get_docs_abs_path(),'BIDU.txt'), 'r') as file:
 
         for line in file:
 
@@ -68,20 +77,55 @@ auth.set_access_token(
 TWEEPY_API_INSTANCE = tweepy.API(auth)
 
 
+
+
 def main():
-    with open(RESULTS_CSV_FILE_NAME, 'w', newline='') as csvfile:
-        results_writer = csv.writer(csvfile, delimiter=' ',
+
+    import pandas as pd
+
+    df = pd.DataFrame(columns=['ID','Text','SentimentLabel'])
+
+    with open(RESULTS_CSV_FILE_NAME, 'w', newline='\n') as csvfile:
+        results_writer = csv.writer(csvfile, delimiter='\t',
                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
 
         for id_proc_batch, sent_proc_batch in get_batch_to_process():
 
-            # Iterate through the id_processing_batch keeping track of the index
-            for index, tweep_id in enumerate(id_proc_batch):
-                # True refers to recovering the full text or limited no. of chars
-                text = TWEEPY_API_INSTANCE.get_direct_message([tweep_id, True])
-                # Write the results to a csv, using the tracked index to find the related sentiment label
-                results_writer.writerow(
-                    [tweep_id, text, sent_proc_batch[index]])
 
-                # Wait to avoid making too many requests too rapidly
-                time.sleep(REQUEST_THROTTLE_IN_SECONDS)
+            try:
+                # Recover the full text
+                results = TWEEPY_API_INSTANCE.statuses_lookup(id_proc_batch)
+                
+                for index, tweet in enumerate(results):
+
+
+                    tweet_id = str(tweet.id)
+
+                    try:
+                        tweet_text = str(tweet.text)
+                    except:
+                        tweet_text = "No text attribute on this tweet"
+
+                    tweet_sentiment_label = str(sent_proc_batch[index])
+
+                    # Write the results to a csv, using the tracked index to find the related sentiment label
+                    results_writer.writerow([tweet_id, tweet_text, tweet_sentiment_label])
+
+                    df = df.append({'ID':tweet_id, 'Text': tweet_text, 'SentimentLabel': tweet_sentiment_label}, ignore_index=True)
+
+            except Exception as e:
+
+
+
+                print("Unable to retrieve -> \n"+str(e))
+                print(tweet_id)
+                print(dir(tweet))
+                print("...............")
+                continue
+
+            # Wait to avoid making too many requests too rapidly
+            time.sleep(REQUEST_THROTTLE_IN_SECONDS)
+    df.to_excel(r'C:\Dev\bootcamp\twitter_api_exercise\docs\excel_pandas_out.xlsx')
+
+if __name__ == "__main__":
+    main()  
