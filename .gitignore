@@ -1,2 +1,4 @@
 *api_credentials.txt
 *__PYCACHE__*
+*.pytest_cache*
+*.vscode*
